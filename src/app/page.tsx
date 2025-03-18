@@ -117,7 +117,7 @@ export default function Home() {
       </Head>
 
       <header className="bg-blue-600 text-white p-4 shadow-md">
-        <h1 className="text-2xl font-bold">chatbot DEMO</h1>
+        <h1 className="text-2xl font-bold">insurance buddy demo</h1>
       </header>
 
       <main className="flex-1 max-w-4xl w-full mx-auto p-4">
