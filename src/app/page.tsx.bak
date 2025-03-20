@@ -1,0 +1,709 @@
+// 'use client';
+// // pages/index.tsx
+// import { useState } from 'react';
+// import Head from 'next/head';
+
+// // ประเภทข้อมูลสำหรับข้อความแชท
+// type Message = {
+//   id: number;
+//   text: string;
+//   sender: 'user' | 'bot';
+// };
+
+// // ฟังก์ชันสำหรับตอบกลับตามเคสที่กำหนด
+// const generateResponse = (text: string): string => {
+//   // แปลงข้อความเป็นตัวพิมพ์เล็กและลบช่องว่างหน้า-หลัง เพื่อง่ายต่อการตรวจสอบ
+//   const userMessage = text.toLowerCase().trim();
+  
+//   // เคสสำหรับคำทักทาย
+//   if (userMessage.includes('สวัสดี') || userMessage.includes('หวัดดี') || userMessage === 'hi' || userMessage === 'hello') {
+//     return "สวัสดีครับ มีอะไรให้ช่วยไหมครับ?";
+//   }
+  
+//   // เคสสำหรับคำถามวันที่
+//   if (userMessage.includes('วันนี้วันอะไร') || userMessage.includes('วันอะไร') || userMessage.includes('วันนี้')) {
+//     const days = ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'];
+//     const today = new Date();
+//     const thaiDay = days[today.getDay()];
+//     return `วันนี้เป็น${thaiDay}ครับ (${today.toLocaleDateString('th-TH')})`;
+//   }
+  
+//   // เคสสำหรับคำถามเวลา
+//   if (userMessage.includes('กี่โมง') || userMessage.includes('เวลา')) {
+//     const now = new Date();
+//     return `ขณะนี้เวลา ${now.toLocaleTimeString('th-TH')} น. ครับ`;
+//   }
+  
+//   // เคสสำหรับการแนะนำตัว
+//   if (userMessage.includes('คุณคือใคร') || userMessage.includes('ชื่ออะไร') || userMessage.includes('แนะนำตัว')) {
+//     return "ผมคือแชทบอทอย่างง่าย สร้างด้วย Next.js และ TypeScript ครับ";
+//   }
+  
+//   // เคสสำหรับการขอบคุณ
+//   if (userMessage.includes('ขอบคุณ') || userMessage.includes('thank')) {
+//     return "ยินดีครับ หากมีคำถามอื่นๆ สามารถถามได้เลยครับ";
+//   }
+  
+//   // เคสสำหรับการลา
+//   if (userMessage.includes('ลาก่อน') || userMessage.includes('บาย') || userMessage === 'bye') {
+//     return "ขอบคุณที่ใช้บริการครับ แล้วพบกันใหม่";
+//   }
+  
+//   // คำตอบทั่วไปกรณีไม่ตรงกับเคสใดๆ
+//   const defaultResponses = [
+//     "ขออภัยครับ ผมไม่เข้าใจคำถาม ช่วยถามใหม่ได้ไหมครับ?",
+//     "น่าสนใจครับ คุณช่วยอธิบายเพิ่มเติมได้ไหม?",
+//     "ตอนนี้ผมยังตอบคำถามนี้ไม่ได้ครับ ทีมงานกำลังพัฒนาความสามารถเพิ่มเติมอยู่",
+//     "คุณสามารถลองถามคำถามอื่นได้ไหมครับ?",
+//     "หากต้องการความช่วยเหลือเพิ่มเติม สามารถติดต่อได้ที่อีเมล support@example.com",
+//   ];
+  
+//   // สุ่มคำตอบทั่วไปกรณีไม่ตรงกับเคสใดๆ
+//   const randomIndex = Math.floor(Math.random() * defaultResponses.length);
+//   return defaultResponses[randomIndex];
+// };
+
+// export default function Home() {
+//   // สถานะสำหรับเก็บข้อความและข้อความที่กำลังพิมพ์
+//   const [messages, setMessages] = useState<Message[]>([
+//     { id: 1, text: "สวัสดีครับ ยินดีต้อนรับสู่ระบบแชทบอทอย่างง่าย", sender: 'bot' },
+//   ]);
+//   const [inputText, setInputText] = useState('');
+//   const [isTyping, setIsTyping] = useState(false);
+
+//   // ฟังก์ชันสำหรับส่งข้อความ
+//   const handleSendMessage = () => {
+//     if (inputText.trim() === '') return;
+    
+//     // เพิ่มข้อความของผู้ใช้
+//     const newUserMessage: Message = {
+//       id: messages.length + 1,
+//       text: inputText,
+//       sender: 'user',
+//     };
+    
+//     setMessages([...messages, newUserMessage]);
+//     setInputText('');
+//     setIsTyping(true);
+    
+//     // จำลองการตอบกลับของบอทหลังจากรอ 1 วินาที
+//     setTimeout(() => {
+//       // สร้างคำตอบตามเคสที่กำหนด
+//       const botResponseText = generateResponse(inputText);
+//       const botReply: Message = {
+//         id: messages.length + 2,
+//         text: botResponseText,
+//         sender: 'bot',
+//       };
+      
+//       setMessages(prevMessages => [...prevMessages, botReply]);
+//       setIsTyping(false);
+//     }, 1000);
+//   };
+
+//   // ฟังก์ชันสำหรับการกด Enter เพื่อส่งข้อความ
+//   const handleKeyPress = (e: React.KeyboardEvent) => {
+//     if (e.key === 'Enter') {
+//       handleSendMessage();
+//     }
+//   };
+
+//   return (
+//     <div className="flex flex-col min-h-screen bg-gray-100">
+//       <Head>
+//         <title>Simple NextJS Chatbot</title>
+//         <meta name="description" content="A simple chatbot demo with Next.js" />
+//         <link rel="icon" href="/favicon.ico" />
+//       </Head>
+
+//       <header className="bg-blue-600 text-white p-4 shadow-md">
+//         <h1 className="text-2xl font-bold">Insur</h1>
+//       </header>
+
+//       <main className="flex-1 max-w-4xl w-full mx-auto p-4">
+//         <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[600px]">
+//           {/* ส่วนแสดงข้อความแชท */}
+//           <div className="flex-1 p-4 overflow-y-auto">
+//             {messages.map((message) => (
+//               <div 
+//                 key={message.id} 
+//                 className={`mb-4 ${
+//                   message.sender === 'user' ? 'text-right' : 'text-left'
+//                 }`}
+//               >
+//                 <div
+//                   className={`inline-block px-4 py-2 rounded-lg ${
+//                     message.sender === 'user'
+//                       ? 'bg-blue-500 text-white'
+//                       : 'bg-gray-200 text-gray-800'
+//                   }`}
+//                 >
+//                   {message.text}
+//                 </div>
+//               </div>
+//             ))}
+//             {isTyping && (
+//               <div className="text-left mb-4">
+//                 <div className="inline-block px-4 py-2 rounded-lg bg-gray-200 text-gray-800">
+//                   <span className="animate-pulse">กำลังพิมพ์...</span>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+
+//           {/* ส่วนกล่องข้อความและปุ่มส่ง */}
+//           <div className="border-t border-gray-200 p-4 flex">
+//             <input
+//               type="text"
+//               value={inputText}
+//               onChange={(e) => setInputText(e.target.value)}
+//               onKeyPress={handleKeyPress}
+//               placeholder="พิมพ์ข้อความของคุณ..."
+//               className="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+//             />
+//             <button
+//               onClick={handleSendMessage}
+//               className="bg-blue-500 text-white px-6 py-2 rounded-r-lg hover:bg-blue-600 transition-colors"
+//             >
+//               ส่ง
+//             </button>
+//           </div>
+//         </div>
+//       </main>
+
+//       <footer className="bg-gray-800 text-white text-center p-4">
+//         <p>© 2025 แชทบอทอย่างง่าย - สร้างด้วย Next.js และ TypeScript</p>
+//       </footer>
+//     </div>
+//   );
+// }
+'use client';
+// pages/index.tsx
+import { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
+
+// ประเภทข้อมูลสำหรับข้อความแชท
+type Message = {
+  id: number;
+  text: string;
+  sender: 'user' | 'bot';
+  options?: string[]; // ตัวเลือกสำหรับคำตอบ
+};
+
+// ประเภทข้อมูลสำหรับข้อมูลลูกค้า
+type CustomerInfo = {
+  name: string;
+  age: number | null;
+  income: number | null;
+  monthlyBudget: number | null;
+  hasExistingInsurance: boolean | null;
+  healthConcerns: string[];
+  familyStatus: string;
+};
+
+// ประเภทข้อมูลสำหรับแพ็คเกจประกัน
+type InsurancePackage = {
+  id: string;
+  name: string;
+  description: string;
+  monthlyCost: number;
+  coverage: string[];
+  suitableFor: string;
+  minAge: number;
+  maxAge: number;
+  recommendedIncomeRange: [number, number]; // [min, max]
+};
+
+// ข้อมูลแพ็คเกจประกันตัวอย่าง
+const insurancePackages: InsurancePackage[] = [
+  {
+    id: 'health-basic',
+    name: 'ประกันสุขภาพพื้นฐาน',
+    description: 'แผนประกันสุขภาพราคาประหยัด ครอบคลุมค่ารักษาพยาบาลกรณีผู้ป่วยใน',
+    monthlyCost: 800,
+    coverage: [
+      'ค่าห้องและค่าอาหาร วันละ 1,000 บาท (สูงสุด 30 วัน/ครั้ง)',
+      'ค่ารักษาพยาบาลกรณีผู้ป่วยใน วงเงิน 100,000 บาท/ปี',
+      'ค่าผ่าตัด วงเงิน 30,000 บาท/ครั้ง'
+    ],
+    suitableFor: 'คนรุ่นใหม่ที่เพิ่งเริ่มทำงาน ต้องการความคุ้มครองเบื้องต้นในราคาประหยัด',
+    minAge: 18,
+    maxAge: 35,
+    recommendedIncomeRange: [15000, 30000]
+  },
+  {
+    id: 'health-family',
+    name: 'ประกันสุขภาพครอบครัว',
+    description: 'แผนประกันสุขภาพสำหรับคนมีครอบครัว ครอบคลุมทั้งการรักษาพยาบาลและสวัสดิการครอบครัว',
+    monthlyCost: 1500,
+    coverage: [
+      'ค่าห้องและค่าอาหาร วันละ 2,000 บาท (สูงสุด 45 วัน/ครั้ง)',
+      'ค่ารักษาพยาบาลกรณีผู้ป่วยใน วงเงิน 300,000 บาท/ปี',
+      'ค่าผ่าตัด วงเงิน 100,000 บาท/ครั้ง',
+      'ค่ารักษาพยาบาลกรณีผู้ป่วยนอก 1,000 บาท/ครั้ง (สูงสุด 30 ครั้ง/ปี)',
+      'สวัสดิการการศึกษาบุตร 50,000 บาท (กรณีผู้เอาประกันเสียชีวิต)'
+    ],
+    suitableFor: 'ผู้ที่มีครอบครัวและต้องการความคุ้มครองที่ครอบคลุมทั้งตนเองและครอบครัว',
+    minAge: 25,
+    maxAge: 50,
+    recommendedIncomeRange: [30000, 60000]
+  },
+  {
+    id: 'health-premium',
+    name: 'ประกันสุขภาพพรีเมียม',
+    description: 'แผนประกันสุขภาพระดับพรีเมียม ครอบคลุมการรักษาพยาบาลอย่างครบวงจร',
+    monthlyCost: 3000,
+    coverage: [
+      'ค่าห้องและค่าอาหาร วันละ 4,000 บาท (สูงสุด 60 วัน/ครั้ง)',
+      'ค่ารักษาพยาบาลกรณีผู้ป่วยใน วงเงิน 1,000,000 บาท/ปี',
+      'ค่าผ่าตัด วงเงิน 300,000 บาท/ครั้ง',
+      'ค่ารักษาพยาบาลกรณีผู้ป่วยนอก 2,000 บาท/ครั้ง (ไม่จำกัดจำนวนครั้ง/ปี)',
+      'ค่ารักษาพยาบาลฉุกเฉินในต่างประเทศ 500,000 บาท/ปี',
+      'ตรวจสุขภาพประจำปี 1 ครั้ง/ปี'
+    ],
+    suitableFor: 'ผู้ที่ต้องการความคุ้มครองเต็มรูปแบบ และสามารถจ่ายเบี้ยประกันในระดับสูงได้',
+    minAge: 30,
+    maxAge: 60,
+    recommendedIncomeRange: [60000, 1000000]
+  },
+  {
+    id: 'saving-retirement',
+    name: 'ประกันเพื่อการเกษียณ',
+    description: 'แผนประกันเพื่อการเก็บออมระยะยาว ให้ผลตอบแทนที่ดีเมื่อเกษียณอายุ',
+    monthlyCost: 5000,
+    coverage: [
+      'เงินก้อนเมื่อเกษียณอายุ 60 ปี',
+      'ความคุ้มครองชีวิต 500,000 บาท',
+      'เงินปันผลสะสมตามผลประกอบการ',
+      'สิทธิลดหย่อนภาษีสูงสุดตามที่กฎหมายกำหนด'
+    ],
+    suitableFor: 'ผู้ที่ต้องการวางแผนการเงินเพื่อวัยเกษียณ',
+    minAge: 35,
+    maxAge: 55,
+    recommendedIncomeRange: [40000, 1000000]
+  },
+];
+
+// สถานะของการสนทนา
+enum ConversationState {
+  GREETING,
+  ASK_NAME,
+  ASK_AGE,
+  ASK_INCOME,
+  ASK_MONTHLY_BUDGET,
+  ASK_EXISTING_INSURANCE,
+  ASK_HEALTH_CONCERNS,
+  ASK_FAMILY_STATUS,
+  RECOMMEND_INSURANCE,
+  PROVIDE_MORE_INFO,
+  END_CONVERSATION
+}
+
+export default function Home() {
+  // สถานะสำหรับเก็บข้อความและข้อความที่กำลังพิมพ์
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputText, setInputText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [conversationState, setConversationState] = useState<ConversationState>(ConversationState.GREETING);
+  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
+    name: '',
+    age: null,
+    income: null,
+    monthlyBudget: null,
+    hasExistingInsurance: null,
+    healthConcerns: [],
+    familyStatus: ''
+  });
+  const [recommendedPackages, setRecommendedPackages] = useState<InsurancePackage[]>([]);
+  const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [currentOptions, setCurrentOptions] = useState<string[]>([]);
+  const [selectedPackageId, setSelectedPackageId] = useState<string | null>(null);
+
+  // ฟังก์ชันสำหรับเพิ่มข้อความของบอท
+  const addBotMessage = (text: string, options?: string[]) => {
+    const newMessage: Message = {
+      id: Date.now(),
+      text,
+      sender: 'bot',
+      options
+    };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
+    
+    if (options && options.length > 0) {
+      setShowOptions(true);
+      setCurrentOptions(options);
+    } else {
+      setShowOptions(false);
+      setCurrentOptions([]);
+    }
+  };
+
+  // ฟังก์ชันสำหรับเพิ่มข้อความของผู้ใช้
+  const addUserMessage = (text: string) => {
+    const newMessage: Message = {
+      id: Date.now(),
+      text,
+      sender: 'user'
+    };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
+  };
+
+  // ฟังก์ชันสำหรับคำนวณแพ็คเกจประกันที่แนะนำ
+  const calculateRecommendedPackages = useCallback(() => {
+    if (!customerInfo.age || !customerInfo.income || !customerInfo.monthlyBudget) {
+      return [];
+    }
+
+    return insurancePackages.filter(pkg => {
+      // ตรวจสอบว่าอายุอยู่ในช่วงที่เหมาะสม
+      const ageMatches = customerInfo.age !== null && customerInfo.age >= pkg.minAge && customerInfo.age <= pkg.maxAge;
+      
+      // ตรวจสอบว่างบประมาณรายเดือนเพียงพอ
+      const budgetMatches = customerInfo.monthlyBudget !== null && customerInfo.monthlyBudget >= pkg.monthlyCost;
+      
+      // ตรวจสอบว่ารายได้อยู่ในช่วงที่แนะนำ
+      const incomeMatches = customerInfo.income >= pkg.recommendedIncomeRange[0] && 
+                            customerInfo.income !== null && customerInfo.income <= pkg.recommendedIncomeRange[1];
+      
+      // เงื่อนไขเพิ่มเติมตามสถานะครอบครัว
+      let extraCriteria = true;
+      if (pkg.id === 'health-family' && customerInfo.familyStatus !== 'มีครอบครัว') {
+        extraCriteria = false;
+      }
+      
+      return ageMatches && budgetMatches && incomeMatches && extraCriteria;
+    }).sort((a, b) => {
+      // เรียงลำดับตามความเหมาะสมกับงบประมาณ (ใกล้กับงบประมาณมากที่สุด)
+      const aDiff = Math.abs(a.monthlyCost - (customerInfo.monthlyBudget || 0));
+      const bDiff = Math.abs(b.monthlyCost - (customerInfo.monthlyBudget || 0));
+      return aDiff - bDiff;
+    });
+  });
+
+  // ฟังก์ชันสำหรับประมวลผลคำตอบของผู้ใช้
+  const processUserResponse = (response: string) => {
+    switch (conversationState) {
+      case ConversationState.ASK_NAME:
+        setCustomerInfo(prev => ({ ...prev, name: response }));
+        setConversationState(ConversationState.ASK_AGE);
+        break;
+      
+      case ConversationState.ASK_AGE:
+        const age = parseInt(response);
+        if (isNaN(age)) {
+          addBotMessage('ขอโทษค่ะ ดิฉันไม่เข้าใจ กรุณาระบุอายุเป็นตัวเลขค่ะ เช่น 35');
+          return;
+        }
+        setCustomerInfo(prev => ({ ...prev, age }));
+        setConversationState(ConversationState.ASK_INCOME);
+        break;
+      
+      case ConversationState.ASK_INCOME:
+        const income = parseInt(response.replace(/,/g, ''));
+        if (isNaN(income)) {
+          addBotMessage('ขอโทษค่ะ ดิฉันไม่เข้าใจ กรุณาระบุรายได้เป็นตัวเลขค่ะ เช่น 30000');
+          return;
+        }
+        setCustomerInfo(prev => ({ ...prev, income }));
+        setConversationState(ConversationState.ASK_MONTHLY_BUDGET);
+        break;
+      
+      case ConversationState.ASK_MONTHLY_BUDGET:
+        const budget = parseInt(response.replace(/,/g, ''));
+        if (isNaN(budget)) {
+          addBotMessage('ขอโทษค่ะ ดิฉันไม่เข้าใจ กรุณาระบุงบประมาณเป็นตัวเลขค่ะ เช่น 1500');
+          return;
+        }
+        setCustomerInfo(prev => ({ ...prev, monthlyBudget: budget }));
+        setConversationState(ConversationState.ASK_EXISTING_INSURANCE);
+        break;
+      
+      case ConversationState.ASK_EXISTING_INSURANCE:
+        const hasInsurance = response.toLowerCase().includes('มี') || response.toLowerCase().includes('yes');
+        setCustomerInfo(prev => ({ ...prev, hasExistingInsurance: hasInsurance }));
+        setConversationState(ConversationState.ASK_HEALTH_CONCERNS);
+        break;
+      
+      case ConversationState.ASK_HEALTH_CONCERNS:
+        let concerns: string[] = [];
+        if (response.toLowerCase() !== 'ไม่มี' && !response.toLowerCase().includes('no')) {
+          concerns = response.split(',').map(concern => concern.trim());
+        }
+        setCustomerInfo(prev => ({ ...prev, healthConcerns: concerns }));
+        setConversationState(ConversationState.ASK_FAMILY_STATUS);
+        break;
+      
+      case ConversationState.ASK_FAMILY_STATUS:
+        setCustomerInfo(prev => ({ ...prev, familyStatus: response }));
+        setConversationState(ConversationState.RECOMMEND_INSURANCE);
+        break;
+      
+      case ConversationState.PROVIDE_MORE_INFO:
+        if (response.toLowerCase().includes('สนใจ') || response.toLowerCase().includes('yes')) {
+          setConversationState(ConversationState.END_CONVERSATION);
+        } else {
+          // กลับไปหน้าแนะนำแพ็คเกจ
+          setConversationState(ConversationState.RECOMMEND_INSURANCE);
+        }
+        break;
+      
+      case ConversationState.RECOMMEND_INSURANCE:
+        if (selectedPackageId) {
+          // ถ้ามีการเลือกแพ็คเกจแล้ว
+          if (response.toLowerCase().includes('สนใจ') || response.toLowerCase().includes('yes')) {
+            setConversationState(ConversationState.END_CONVERSATION);
+          } else {
+            setSelectedPackageId(null);
+            addBotMessage('ต้องการดูแพ็คเกจอื่นหรือไม่คะ?', ['ใช่, อยากดูแพ็คเกจอื่น', 'ไม่, ขอบคุณค่ะ']);
+          }
+        } else {
+          // ถ้ายังไม่ได้เลือกแพ็คเกจ และมีการเลือกตัวเลือก
+          const packageId = recommendedPackages.find(pkg => 
+            response.includes(pkg.name)
+          )?.id;
+          
+          if (packageId) {
+            setSelectedPackageId(packageId);
+            const selectedPackage = insurancePackages.find(pkg => pkg.id === packageId);
+            
+            if (selectedPackage) {
+              let detailsMessage = `รายละเอียดแพ็คเกจ "${selectedPackage.name}"\n\n`;
+              detailsMessage += `${selectedPackage.description}\n\n`;
+              detailsMessage += `ค่าเบี้ยประกัน: ${selectedPackage.monthlyCost.toLocaleString()} บาท/เดือน\n\n`;
+              detailsMessage += `ความคุ้มครอง:\n`;
+              selectedPackage.coverage.forEach(item => {
+                detailsMessage += `- ${item}\n`;
+              });
+              detailsMessage += `\nเหมาะสำหรับ: ${selectedPackage.suitableFor}`;
+              
+              addBotMessage(detailsMessage);
+              addBotMessage('คุณสนใจสมัครแพ็คเกจนี้หรือไม่คะ?', ['สนใจ, ต้องการสมัคร', 'ไม่สนใจ, ขอดูแพ็คเกจอื่น']);
+            }
+          } else if (response.toLowerCase().includes('ไม่') || response.toLowerCase().includes('no')) {
+            setConversationState(ConversationState.END_CONVERSATION);
+          } else {
+            addBotMessage('ขอโทษค่ะ ดิฉันไม่เข้าใจคำตอบ กรุณาเลือกจากตัวเลือกที่ให้ค่ะ');
+          }
+        }
+        break;
+      
+      case ConversationState.END_CONVERSATION:
+        // รีเซ็ตการสนทนาใหม่หากต้องการ
+        if (response.toLowerCase().includes('ใหม่') || response.toLowerCase().includes('start')) {
+          setConversationState(ConversationState.GREETING);
+          setCustomerInfo({
+            name: '',
+            age: null,
+            income: null,
+            monthlyBudget: null,
+            hasExistingInsurance: null,
+            healthConcerns: [],
+            familyStatus: ''
+          });
+          setMessages([]);
+          initiateConversation();
+        }
+        break;
+        
+      case ConversationState.GREETING:
+      default:
+        setConversationState(ConversationState.ASK_NAME);
+        break;
+    }
+  };
+
+  // ฟังก์ชันสำหรับส่งข้อความ
+  const handleSendMessage = () => {
+    if (inputText.trim() === '') return;
+    
+    addUserMessage(inputText);
+    setInputText('');
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      processUserResponse(inputText);
+      setIsTyping(false);
+    }, 1000);
+  };
+
+  // ฟังก์ชันสำหรับเลือกตัวเลือก
+  const handleOptionSelect = (option: string) => {
+    addUserMessage(option);
+    setShowOptions(false);
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      processUserResponse(option);
+      setIsTyping(false);
+    }, 1000);
+  };
+
+  // ฟังก์ชันสำหรับการกด Enter เพื่อส่งข้อความ
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  // ฟังก์ชันเริ่มต้นการสนทนา
+  const initiateConversation = useCallback(() => {
+    addBotMessage('สวัสดีค่ะ ดิฉันเป็นผู้ช่วยให้คำปรึกษาด้านประกันออนไลน์ ยินดีให้คำแนะนำเกี่ยวกับแผนประกันที่เหมาะกับคุณค่ะ');
+    setConversationState(ConversationState.ASK_NAME);
+  }, []);
+
+  // ฟังก์ชันสำหรับอัพเดทคำถามตามสถานะการสนทนา
+  useEffect(() => {
+    switch (conversationState) {
+      case ConversationState.ASK_NAME:
+        addBotMessage('กรุณาแนะนำชื่อของคุณค่ะ');
+        break;
+      
+      case ConversationState.ASK_AGE:
+        addBotMessage(`คุณ${customerInfo.name} กรุณาระบุอายุของคุณค่ะ`);
+        break;
+      
+      case ConversationState.ASK_INCOME:
+        addBotMessage('กรุณาระบุรายได้ต่อเดือนของคุณค่ะ (บาท)');
+        break;
+      
+      case ConversationState.ASK_MONTHLY_BUDGET:
+        addBotMessage('คุณสามารถจัดสรรงบประมาณเพื่อจ่ายเบี้ยประกันได้เดือนละเท่าไรคะ? (บาท)');
+        break;
+      
+      case ConversationState.ASK_EXISTING_INSURANCE:
+        addBotMessage('คุณมีประกันอยู่แล้วหรือไม่คะ?', ['มี', 'ไม่มี']);
+        break;
+      
+      case ConversationState.ASK_HEALTH_CONCERNS:
+        addBotMessage('คุณมีความกังวลด้านสุขภาพเรื่องใดหรือไม่คะ? (หากมีหลายเรื่อง กรุณาคั่นด้วยเครื่องหมายคอมม่า)');
+        break;
+      
+      case ConversationState.ASK_FAMILY_STATUS:
+        addBotMessage('กรุณาระบุสถานะครอบครัวของคุณค่ะ', ['โสด', 'มีครอบครัว', 'แต่งงานแล้วยังไม่มีบุตร', 'มีบุตร']);
+        break;
+      
+      case ConversationState.RECOMMEND_INSURANCE:
+        const packages = calculateRecommendedPackages();
+        setRecommendedPackages(packages);
+        
+        if (packages.length === 0) {
+          addBotMessage(`ขอบคุณสำหรับข้อมูลค่ะ คุณ${customerInfo.name} ขณะนี้เรายังไม่มีแพ็คเกจที่เหมาะสมกับความต้องการของคุณ หากคุณต้องการคำแนะนำเพิ่มเติม กรุณาติดต่อเจ้าหน้าที่ของเราที่เบอร์ 02-123-4567 ค่ะ`);
+          setConversationState(ConversationState.END_CONVERSATION);
+        } else {
+          let message = `ขอบคุณสำหรับข้อมูลค่ะ คุณ${customerInfo.name} จากข้อมูลที่คุณให้มา ดิฉันขอแนะนำแพ็คเกจประกันที่เหมาะกับคุณ ${packages.length} แพ็คเกจค่ะ\n\n`;
+          
+          const packageOptions = packages.map(pkg => {
+            message += `${pkg.name} - ${pkg.monthlyCost.toLocaleString()} บาท/เดือน\n`;
+            return `${pkg.name} - ${pkg.monthlyCost.toLocaleString()} บาท/เดือน`;
+          });
+          
+          message += '\nกรุณาเลือกแพ็คเกจที่ต้องการดูรายละเอียดเพิ่มเติมค่ะ';
+          addBotMessage(message, [...packageOptions, 'ไม่สนใจแพ็คเกจใด']);
+        }
+        break;
+      
+      case ConversationState.END_CONVERSATION:
+        if (selectedPackageId) {
+          const selectedPackage = insurancePackages.find(pkg => pkg.id === selectedPackageId);
+          if (selectedPackage) {
+            addBotMessage(`ขอบคุณที่สนใจแพ็คเกจ ${selectedPackage.name} ค่ะ คุณ${customerInfo.name} ทีมงานของเราจะติดต่อกลับไปเพื่อดำเนินการต่อภายใน 24 ชั่วโมง หรือหากมีข้อสงสัยเพิ่มเติม สามารถติดต่อเราได้ที่เบอร์ 02-123-4567 ค่ะ`);
+            addBotMessage('หากต้องการเริ่มการสนทนาใหม่ กรุณาพิมพ์ "เริ่มใหม่" ค่ะ');
+          }
+        } else {
+          addBotMessage(`ขอบคุณที่ใช้บริการค่ะ คุณ${customerInfo.name} หากมีข้อสงสัยหรือต้องการคำแนะนำเพิ่มเติม สามารถติดต่อเราได้ที่เบอร์ 02-123-4567 ค่ะ`);
+          addBotMessage('หากต้องการเริ่มการสนทนาใหม่ กรุณาพิมพ์ "เริ่มใหม่" ค่ะ');
+        }
+        break;
+    }
+  }, [conversationState, customerInfo.name, selectedPackageId, calculateRecommendedPackages]);
+
+  // เริ่มต้นการสนทนาเมื่อโหลดหน้า
+  useEffect(() => {
+    initiateConversation();
+  }, [initiateConversation]);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Head>
+        <title>ที่ปรึกษาประกันออนไลน์</title>
+        <meta name="description" content="บริการให้คำปรึกษาด้านประกันแบบส่วนตัว" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <header className="bg-blue-600 text-white p-4 shadow-md">
+        <h1 className="text-2xl font-bold">Insure Thai - ที่ปรึกษาประกันออนไลน์</h1>
+      </header>
+
+      <main className="flex-1 max-w-4xl w-full mx-auto p-4">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-[600px]">
+          {/* ส่วนแสดงข้อความแชท */}
+          <div className="flex-1 p-4 overflow-y-auto">
+            {messages.map((message) => (
+              <div 
+                key={message.id} 
+                className={`mb-4 ${
+                  message.sender === 'user' ? 'text-right' : 'text-left'
+                }`}
+              >
+                <div
+                  className={`inline-block px-4 py-2 rounded-lg max-w-[80%] ${
+                    message.sender === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-800'
+                  }`}
+                >
+                  {message.text.split('\n').map((line, i) => (
+                    <div key={i}>{line || <br />}</div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="text-left mb-4">
+                <div className="inline-block px-4 py-2 rounded-lg bg-gray-200 text-gray-800">
+                  <span className="animate-pulse">กำลังพิมพ์...</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ส่วนแสดงตัวเลือก */}
+          {showOptions && currentOptions.length > 0 && (
+            <div className="border-t border-gray-200 p-3 flex flex-wrap gap-2">
+              {currentOptions.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleOptionSelect(option)}
+                  className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md hover:bg-blue-200 transition-colors text-sm"
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* ส่วนกล่องข้อความและปุ่มส่ง */}
+          <div className="border-t border-gray-200 p-4 flex">
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="พิมพ์ข้อความของคุณ..."
+              className="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={showOptions}
+            />
+            <button
+              onClick={handleSendMessage}
+              className={`${showOptions ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'} text-white px-6 py-2 rounded-r-lg transition-colors`}
+              disabled={showOptions}
+            >
+              ส่ง
+            </button>
+          </div>
+        </div>
+      </main>
+      </div>
+  );
+}
